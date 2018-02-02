@@ -3,6 +3,7 @@ var PRICE=9.99;
 new Vue({
     el : '#app',
     data : {
+        search : '',
         total : 0,
         items : [
             {id: 1, title : 'Item 1'},
@@ -13,6 +14,10 @@ new Vue({
         cart : []
     },
     methods :{
+        onSubmit:function(){
+            console.log("Search: " + this.search);
+            console.log(this.$http);
+        },
         addItem : function(index){
             //this.cart.push(this.items[index]);
             this.total += 9.29;
@@ -22,6 +27,7 @@ new Vue({
                 if(this.cart[k].id == item.id){
                     found = true;
                     this.cart[k].qty++;
+                    break;
                 }
             }
             if(!found){
@@ -34,9 +40,20 @@ new Vue({
             }
         },
         inc : function(item){
-
+            item.qty++;
+            this.total += PRICE;
         },
         dec : function(item){
+            item.qty--;
+            this.total -= PRICE;
+            if(item.qty <= 0){
+                for(var p=0; p<this.cart.length; p++){
+                    if(this.cart[p].id == item.id){
+                        this.cart.splice(p, 1);
+                        break;
+                    }
+                }
+            }
 
         }
     },
