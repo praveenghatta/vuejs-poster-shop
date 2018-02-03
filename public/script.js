@@ -3,23 +3,28 @@ var PRICE=9.99;
 new Vue({
     el : '#app',
     data : {
-        search : '',
         total : 0,
-        items : [
-            {id: 1, title : 'Item 1'},
-            {id: 2, title : 'Item 2'},
-            {id: 3, title : 'Item 3'},
-            {id: 4, title : 'Item 4'}
-        ],
-        cart : []
+        items : [],
+        cart : [],
+        newSearch : 'anime',
+        lastSearch:'',
+        loading : false,
+        price : PRICE
     },
     methods :{
         onSubmit:function(){
-            console.log("Search: " + this.search);
-            console.log(this.$http);
+            this.loading = true;
+            this.items = [];
+            this.$http
+                .get('/search/'.concat(this.newSearch))
+                .then(function(res){
+                    this.lastSearch = this.newSearch;
+                    this.items = res.data;
+                    this.loading = false;
+                })
+            ;
         },
         addItem : function(index){
-            //this.cart.push(this.items[index]);
             this.total += 9.29;
             var item = this.items[index];
             var found = false;
@@ -54,7 +59,6 @@ new Vue({
                     }
                 }
             }
-
         }
     },
 
@@ -62,5 +66,9 @@ new Vue({
         currency : function(value){
             return '$'.concat(value.toFixed(2));
         }
+    },
+
+    mounted : function(){
+        this.onSubmit();
     }
 });
